@@ -19,3 +19,4 @@ config.json
 .mypy_cache/
 *.tmp.*
 *.spec
+CLAUDE.md
