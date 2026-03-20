@@ -1,0 +1,35 @@
+[project]
+name = "retext"
+version = "0.1.0"
+description = "System-wide text rewriter for Windows 11 — select text, press hotkey, get grammar/casing/punctuation corrected in place."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.12"
+dependencies = [
+    "pynput>=1.7.0",
+    "pyperclip>=1.9.0",
+    "google-genai>=1.0.0",
+    "pystray>=0.19.5",
+    "Pillow>=10.0.0",
+]
+
+[project.scripts]
+rewrite = "rewrite.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rewrite"]
+
+[tool.ruff]
+target-version = "py312"
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
