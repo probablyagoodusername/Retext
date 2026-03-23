@@ -9,10 +9,7 @@ from collections import deque
 from datetime import datetime
 from pathlib import Path
 from tkinter import ttk
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    pass
+from collections.abc import Callable
 
 _MAX_ENTRIES = 200
 
@@ -23,7 +20,7 @@ class LogBuffer:
     def __init__(self, maxlen: int = _MAX_ENTRIES) -> None:
         self._entries: deque[tuple[datetime, str]] = deque(maxlen=maxlen)
         self._lock = threading.Lock()
-        self._listeners: list[callable] = []
+        self._listeners: list[Callable[[datetime, str], None]] = []
 
     def append(self, message: str) -> None:
         now = datetime.now()
@@ -67,7 +64,10 @@ class LogViewer:
             self._window.focus_force()
             return
 
-        self._window = tk.Toplevel() if tk._default_root else tk.Tk()
+        from rewrite.tkroot import get_root
+
+        get_root()  # ensure hidden root exists
+        self._window = tk.Toplevel()
         self._window.title("Retext \u2014 Log")
         self._window.geometry("520x360")
         self._window.minsize(360, 200)

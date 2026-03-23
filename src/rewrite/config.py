@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 
 DEFAULT_CONFIG: dict = {
-    "hotkey": "ctrl+shift+r",
+    "hotkey": "ctrl+alt+r",
     "gemini_api_key": "",
     "gemini_model": "gemini-2.5-flash",
 }

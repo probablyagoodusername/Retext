@@ -57,6 +57,7 @@ class RewriteApp:
         self.tray: pystray.Icon | None = None
         self._settings_open = False
         self._log_viewer = LogViewer(icon_path=ICON_PATH)
+        self._pipeline_lock = threading.Lock()
 
     # ------------------------------------------------------------------
     # Tray tooltip helper
@@ -77,6 +78,15 @@ class RewriteApp:
 
     def _rewrite_pipeline(self) -> None:
         """Capture -> rewrite -> paste -> restore clipboard."""
+        if not self._pipeline_lock.acquire(blocking=False):
+            log_buffer.append("Hotkey triggered — pipeline busy, skipped")
+            return
+        try:
+            self._run_pipeline()
+        finally:
+            self._pipeline_lock.release()
+
+    def _run_pipeline(self) -> None:
         log_buffer.append("Hotkey triggered")
         self._set_status("Capturing…")
 
@@ -93,7 +103,7 @@ class RewriteApp:
             self._set_status("Rewriting…")
             log_buffer.append("Sending to Gemini…")
 
-            corrected = asyncio.run(rewrite_text(text))
+            corrected = asyncio.run(rewrite_text(text, config=self.config))
 
             if corrected and corrected != text:
                 replace_selection(corrected)

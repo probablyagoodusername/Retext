@@ -56,9 +56,9 @@ def clean_response(text: str) -> str:
     return text.strip()
 
 
-async def rewrite_text(text: str) -> str:
+async def rewrite_text(text: str, config: dict | None = None) -> str:
     """Send text to Gemini, return corrected text."""
-    provider = get_provider()
+    provider = get_provider(config)
     result = await provider.rewrite(text, system_prompt=SYSTEM_PROMPT)
     return clean_response(result)
 

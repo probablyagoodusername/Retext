@@ -27,9 +27,10 @@ class SettingsWindow:
         self.on_save = on_save
         self.config = load_config()
 
-        self.root = (
-            tk.Toplevel() if tk._default_root else tk.Tk()
-        )
+        from rewrite.tkroot import get_root
+
+        get_root()  # ensure hidden root exists
+        self.root = tk.Toplevel()
         self.root.title("Retext \u2014 Settings")
         self.root.geometry("400x300")
         self.root.resizable(False, False)
@@ -133,6 +134,8 @@ class SettingsWindow:
         self.hotkey_var.set(DEFAULT_CONFIG["hotkey"])
 
     def _start_recording(self) -> None:
+        if hasattr(self, "_rec_listener") and self._rec_listener is not None:
+            self._rec_listener.stop()
         self.record_btn.config(text="Press keys\u2026")
         self.hotkey_var.set("\u2026")
         self._rec_modifiers: set[str] = set()
